@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "creepingnether:bloodstone"
+    }
+  },
+  "result": {
+    "item": "creepingnether:bloodstone_slab",
+    "data": 0,
+    "count": 6
+  }
+}

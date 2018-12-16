@@ -1,0 +1,16 @@
+[
+{
+  "modid": "creepingnether",
+  "name": "The Creeping Nether",
+  "description": "The Nether shall spill out into the overworld.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://minecraft.curseforge.com/projects/the-creeping-nether",
+  "updateUrl": "",
+  "authorList": ["Dreadwing93"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

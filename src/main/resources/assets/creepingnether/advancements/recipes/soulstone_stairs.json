@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "creepingnether:soulstone_stairs",
+      "creepingnether:soulstone_slab"
+    ]
+  },
+  "criteria": {
+    "stair_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "creepingnether:soulstone_stairs"
+      }
+    },
+    "slab_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "creepingnether:soulstone_slab"
+      }
+    },
+    "has_item": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "creepingnether:soulstone"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "stair_recipe",
+      "has_item"
+    ],
+    [
+      "slab_recipe",
+      "has_item"
+    ]
+  ]
+}

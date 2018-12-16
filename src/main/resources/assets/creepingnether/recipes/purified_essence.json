@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:ghast_tear"
+    },
+    {
+      "item": "creepingnether:essence_nether"
+    }
+  ],
+  "result": {
+    "item": "creepingnether:essence_purified",
+    "data": 0,
+    "count": 1
+  }
+}

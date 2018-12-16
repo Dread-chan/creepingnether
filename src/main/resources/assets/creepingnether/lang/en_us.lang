@@ -1,0 +1,27 @@
+tile.bloodstone.name=Blood Stone
+tile.bloodstone_stairs.name=Blood Stone Stairs
+tile.bloodstone_slab.name=Blood Stone Slab
+tile.charwood.name=Charred Wood
+tile.charwood_bark.name=Charred Bark
+tile.charwood_planks.name=Charred Planks
+tile.charwood_stairs.name=Charred Wood Stairs
+tile.charwood_slab.name=Charred Wood Slab
+tile.creepingobsidian.name=Melty Obsidian
+tile.soulstone.name=Soul Stone
+tile.soulstone_stairs.name=Soul Stone Stairs
+tile.soulstone_slab.name=Soul Stone Slab
+tile.soulstone_charged.name=Charged Soul Stone
+tile.soulstone_crystal.name=Corruption Catalyst
+
+tile.nethercoal.name=Nether Coal Ore
+tile.netheriron.name=Nether Iron Ore
+tile.nethergold.name=Nether Gold Ore
+tile.netherdiamond.name=Nether Diamond Ore
+tile.netheremerald.name=Nether Emerald Ore
+tile.netherlapis.name=Nether Lapis Lazuli Ore
+tile.netherredstone.name=Nether Redstone Ore
+
+item.essence_nether.name=Nether Essence
+item.essence_purified.name=Purified Essence
+
+itemGroup.creepingnether=The Creeping Nether

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "creepingnether:charwood"
+    },
+    {
+      "item": "creepingnether:charwood"
+    }
+  ],
+  "result": {
+    "item": "minecraft:coal",
+    "data": 1,
+    "count": 2
+  }
+}

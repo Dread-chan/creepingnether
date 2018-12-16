@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "creepingnether:charwood_planks"
+    }
+  },
+  "result": {
+    "item": "creepingnether:charwood_stairs",
+    "count": 4
+  }
+}

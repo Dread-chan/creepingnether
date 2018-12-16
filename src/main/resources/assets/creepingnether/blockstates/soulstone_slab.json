@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "half=bottom": { "model": "creepingnether:soulstone_slab" },
+        "half=top": { "model": "creepingnether:soulstone_slab_upper" }
+    }
+}

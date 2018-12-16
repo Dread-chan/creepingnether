@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "creepingnether:soulstone"
+    }
+  },
+  "result": {
+    "item": "creepingnether:soulstone_stairs",
+    "count": 4
+  }
+}

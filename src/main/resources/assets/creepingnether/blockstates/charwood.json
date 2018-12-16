@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "axis=y": { "model": "creepingnether:charwood" },
+        "axis=z": { "model": "creepingnether:charwood", "x": 90 },
+        "axis=x": { "model": "creepingnether:charwood", "x": 90, "y": 90 },
+        "axis=none":   { "model": "creepingnether:charwood_bark" }
+    }
+}

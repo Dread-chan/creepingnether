@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "creepingnether:charwood_planks",
+      "creepingnether:charwood_to_charcoal"
+    ]
+  },
+  "criteria": {
+    "recipe_charcoal": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "creepingnether:charwood_to_charcoal"
+      }
+    },
+    "recipe_planks": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "creepingnether:charwood_planks"
+      }
+    },
+    "has_item": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "creepingnether:charwood"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "recipe_charcoal",
+      "has_item"
+    ],
+    [
+      "recipe_planks",
+      "has_item"
+    ]
+  ]
+}
