@@ -1,10 +1,9 @@
 package com.cutievirus.creepingnether.item;
 
-import java.util.HashMap;
-
+import com.cutievirus.creepingnether.EasyMap;
 import com.cutievirus.creepingnether.Ref;
-import com.cutievirus.creepingnether.entity.EntityPortal;
-
+import com.cutievirus.creepingnether.entity.Corruptor;
+import com.cutievirus.creepingnether.entity.CorruptorAbstract.Corruption;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +21,7 @@ import net.minecraft.world.World;
 public class ItemEssence extends ItemSimpleFoiled {
 	
 	protected SoundEvent sound;
+	private boolean purified;
 	
 	public ItemEssence(String name) {
 		this(name, SoundEvents.ENTITY_ZOMBIE_INFECT);
@@ -34,6 +34,16 @@ public class ItemEssence extends ItemSimpleFoiled {
 		this.sound=sound;
 	}
 	
+	public ItemEssence setPurified(boolean isPurified) {
+		this.purified = isPurified;
+		return this;
+	}
+	
+	public ItemEssence setSound(SoundEvent sound) {
+		this.sound = sound;
+		return this;
+	}
+	
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
     	boolean transformed = transformBlock(world,pos);
     	if(!transformed) { return EnumActionResult.FAIL; }
@@ -41,6 +51,7 @@ public class ItemEssence extends ItemSimpleFoiled {
     		if(x==0&&y==0&&z==0) { continue; }
     		transformBlock(world,pos.add(x, y, z));
     	}
+    	Corruptor.corruptEntities(world, pos);
     	ItemStack itemstack = player.getHeldItem(hand);
     	itemstack.shrink(1);
     	world.playSound((EntityPlayer)null, pos, this.sound, SoundCategory.BLOCKS, 1.0F, (itemRand.nextFloat() - itemRand.nextFloat()) * 0.2F + 1.0F);
@@ -51,37 +62,49 @@ public class ItemEssence extends ItemSimpleFoiled {
     protected boolean transformBlock(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-        HashMap<Block,Block> corruptionMap = getCorruptionMap();
-        boolean isSuccess = corruptionSpecial(world, pos);
-		if (corruptionMap.containsKey(block)) {
-			isSuccess=true;
-			Block into = corruptionMap.get(block);
-			if(world.getBlockState(pos).getBlock()!=into) {
-				world.setBlockState(pos, into.getDefaultState(),2);
-			}
-			corruptBiome(world,pos);
-			corruptionFinal(world,pos);
-		}
-		if(isSuccess) {
-			EntityPortal.corruptEntities(world, pos);
-		}
-    	return isSuccess;
+        String blockname = block.getRegistryName().toString();
+        Object[] keys = {blockname,block};
+        if(getCorruptionMap().getFrom(keys) != null
+        ||getCorruptionSpecial().getFrom(keys) != null ) {
+        	doCorruption(world, pos);
+        	corruptionFinal(world,pos);
+        	return true;
+        }
+        return false;
     }
     
-    protected HashMap<Block,Block> getCorruptionMap(){
-    	return EntityPortal.corruptionMap;
+    protected EasyMap<Object> getCorruptionMap(){
+    	if(purified) {
+    		return Corruptor.corruptionMap;
+    	}
+    	return Corruptor.corruptionMap;
     }
-    protected boolean corruptionSpecial(World world, BlockPos pos) {
-    	return EntityPortal.corruptionSpecial(world, pos);
+    protected EasyMap<Corruption> getCorruptionSpecial(){
+    	if(purified) {
+    		return Corruptor.corruptionSpecial;
+    	}
+    	return Corruptor.corruptionSpecial;
     }
-    protected void corruptBiome(World world, BlockPos pos) {
-    	EntityPortal.corruptBiome(world, pos);
+    protected void doCorruption(World world, BlockPos pos) {
+    	if(purified) {
+    		Corruptor.DoCorruption(world, pos);
+    	}else {
+    		Corruptor.DoCorruption(world, pos);
+    	}
     }
     protected void corruptEntities(World world, BlockPos pos) {
-    	EntityPortal.corruptEntities(world, pos, 1d);
+    	if(purified) {
+    		Corruptor.corruptEntities(world, pos, 1d);
+    	}else {
+    		Corruptor.corruptEntities(world, pos, 1d);
+    	}
     }
     protected void corruptionFinal(World world, BlockPos pos) {
-    	EntityPortal.corruptionFinal(world, world.getBlockState(pos).getBlock(), pos);
+    	if(purified) {
+    		Corruptor.corruptionFinal(world, pos);
+    	}else {
+    		Corruptor.corruptionFinal(world, pos);
+    	}
     }
 
 }

@@ -10,7 +10,21 @@ public class RandomList<E> extends ArrayList<E> {
 	private static final Random rand = new Random();
 	
 	public E getRandom() {
-		return this.get(rand.nextInt(this.size()));
+		return this.get(randomIndex());
+	}
+	
+	public E removeRandom() {
+		return this.remove(randomIndex());
+	}
+	
+	public int randomIndex() {
+		return rand.nextInt(this.size());
+	}
+	
+	public void addAll(@SuppressWarnings("unchecked") E...values) {
+		for (E value : values) {
+			add(value);
+		}
 	}
 
 }

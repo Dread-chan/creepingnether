@@ -58,7 +58,7 @@ public class CreepingMessage implements IMessage{
 			//Fairy.onMessage(world, message.pos, message.index);
 			switch(message.index) {
 			case CORRUPTBIOME:
-				EntityPortal.corruptBiome(world,message.pos);
+				Corruptor.corruptBiome(world,message.pos);
 				break;
 			}
 			return null;

@@ -6,7 +6,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import com.cutievirus.creepingnether.Options;
 import com.cutievirus.creepingnether.Ref;
-import com.cutievirus.creepingnether.entity.EntityPortal;
+import com.cutievirus.creepingnether.entity.Corruptor;
 import com.cutievirus.creepingnether.item.ModItemBlock;
 
 import net.minecraft.block.Block;
@@ -55,28 +55,24 @@ public class BlockCharWood extends BlockRotatedPillar{
 	private void corruption(World world, BlockPos pos){
 		IBlockState state=world.getBlockState(pos);
 		Block block = state.getBlock();
+		boolean corrupt = false;
 		switch(block.getRegistryName().toString()) {
 		case "minecraft:log":
 		case "minecraft:log2":
-			EntityPortal.replaceLog(world,pos);
-			break;
 		case "minecraft:planks":
-			world.setBlockState(pos,Ref.charwood_planks.getDefaultState(),2);
-			break;
-		case "minecraft:wooden_slab":
-			EntityPortal.replaceSlab(world,pos,Ref.charwood_slab);
-			break;
-		case "minecraft:double_wooden_slab":
-			world.setBlockState(pos, Ref.charwood_slab2.getDefaultState(),2);
-			break;
 		case "minecraft:oak_stairs":
 		case "minecraft:spruce_stairs":
 		case "minecraft:birch_stairs":
 		case "minecraft:jungle_stairs":
 		case "minecraft:acacia_stairs":
 		case "minecraft:dark_oak_stairs":
-			EntityPortal.replaceStairs(world,pos,Ref.charwood_stairs);
+		case "minecraft:wooden_slab":
+		case "minecraft:double_wooden_slab":
+			corrupt=true;
 			break;
+		}
+		if(corrupt) {
+			Corruptor.DoCorruption(world, pos);
 		}
 	}
 	

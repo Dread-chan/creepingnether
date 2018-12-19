@@ -1,5 +1,7 @@
 package com.cutievirus.creepingnether;
 
+import com.cutievirus.creepingnether.entity.Corruptor;
+
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -13,7 +15,7 @@ public class Options {
 	@Config.Name("Creep Chance")
 	@Config.Comment("The chance each tick that each block will spread corruption.")
 	@Config.RangeDouble(min=0,max=100)
-	public static double creep_chance=1.6d;
+	public static double creep_chance=1d;
 	
 	@Config.Name("Portal Creep Chance")
 	@Config.Comment("The chance each tick that the portal will spread corruption.")
@@ -27,12 +29,8 @@ public class Options {
 	
 	@Config.Name("Creep Radius")
 	@Config.Comment("How far the corruption will spread. 0 for unlimited.")
-	@Config.RangeInt(min=0,max=1000)
+	@Config.RangeInt(min=0,max=9999)
 	public static  int creep_radius=45;
-	
-	//@Config.Name("Sky Color")
-	//@Config.Comment("The sky color will change while in corrupted area. Disabled by default because it doesn't always work properly.")
-	//public static boolean skyColor=false
 	
 	@Config.Name("Internal Corruption")
 	@Config.Comment("Corruption will also happen inside the Nether.")
@@ -47,8 +45,12 @@ public class Options {
 	public static boolean lingeringcorruption=true;
 	
 	@Config.Name("Sky and Fog")
-	@Config.Comment("Changes sky and fog color within the Creeping Nether. Works best on fast graphics.")
+	@Config.Comment("Changes sky and fog color within the Creeping Nether.")
 	public static boolean skycolor=true;
+	
+	@Config.Name("Active Corruption Limit")
+	@Config.Comment("How many blocks can be actively corrupting at once.")
+	public static int fairylimit=50;
 	
 	@Config.Name("Entity Corruption")
 	@Config.Comment("The Creeping Nether will transform certain types of mobs.")
@@ -170,7 +172,6 @@ public class Options {
 	
 	@Config.Name("Blocks to Transform")
 	@Config.Comment("Specify additional blocks that should be transformed by the corruption.")
-	@Config.RequiresMcRestart
 	public static CustomCorruption customCorruption = new CustomCorruption();
 	public static class CustomCorruption {
 		@Config.Name("To Netherrack")
@@ -240,6 +241,7 @@ public class Options {
 			if (event.getModID().equals(CreepingNether.MODID)) {
 				ConfigManager.sync(CreepingNether.MODID, Config.Type.INSTANCE);
 				TransformationLists.updateTransformationLists();
+				Corruptor.allocateMaps();
 			}
 		}
 	}

@@ -4,9 +4,9 @@ import java.util.Random;
 
 import com.cutievirus.creepingnether.Options;
 import com.cutievirus.creepingnether.Ref;
-import com.cutievirus.creepingnether.entity.EntityPortal;
-
+import com.cutievirus.creepingnether.entity.Corruptor;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockStoneSlab;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -35,23 +35,21 @@ public class BlockBloodStone extends BlockModBlock{
 	private void corruption(World world, BlockPos pos){
 		IBlockState state=world.getBlockState(pos);
 		Block block = state.getBlock();
+		boolean corrupt = false;
 		switch(block.getRegistryName().toString()) {
 		case "minecraft:cobblestone":
-			world.setBlockState(pos, getDefaultState(),2);
+		case "minecraft:stone_stairs":
+			corrupt=true;
 			break;
 		case "minecraft:stone_slab":
-			if(EntityPortal.isCobbleSlab(block,state)) {
-				EntityPortal.replaceSlab(world,pos,Ref.bloodstone_slab);
-			}
-			break;
 		case "minecraft:double_stone_slab":
-			if(EntityPortal.isCobbleSlab(block,state)) {
-				world.setBlockState(pos, Ref.bloodstone_slab2.getDefaultState(),2);
+			if(state.getValue(BlockStoneSlab.VARIANT)==BlockStoneSlab.EnumType.COBBLESTONE) {
+				corrupt=true;
 			}
 			break;
-		case "minecraft:stone_stairs":
-			EntityPortal.replaceStairs(world,pos,Ref.bloodstone_stairs);
-			break;
+		}
+		if(corrupt) {
+			Corruptor.DoCorruption(world, pos);
 		}
 	}
 	

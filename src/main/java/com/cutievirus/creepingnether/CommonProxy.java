@@ -1,7 +1,6 @@
 package com.cutievirus.creepingnether;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -17,8 +16,10 @@ import com.cutievirus.creepingnether.block.BlockSoulStone;
 import com.cutievirus.creepingnether.block.BlockSoulStoneCharged;
 import com.cutievirus.creepingnether.block.BlockSoulStoneCrystal;
 import com.cutievirus.creepingnether.block.WorldGen;
+import com.cutievirus.creepingnether.entity.Corruptor;
 import com.cutievirus.creepingnether.entity.EntityPortal;
 import com.cutievirus.creepingnether.entity.NetherFairy;
+import com.cutievirus.creepingnether.entity.TileEntityNetherCrystal;
 import com.cutievirus.creepingnether.item.ItemEssence;
 
 import net.minecraft.block.Block;
@@ -31,6 +32,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
@@ -95,8 +97,11 @@ public class CommonProxy{
 		
 		//items
 		Ref.netheressence = new ItemEssence("essence_nether");
-		Ref.purifiedessence = new ItemEssence("essence_purified");
+		Ref.purifiedessence = new ItemEssence("essence_purified")
+		.setPurified(true);
 		
+		//tile entities
+		GameRegistry.registerTileEntity(TileEntityNetherCrystal.class, new ResourceLocation("cutievirus_nethercrystal"));
 
 		//generation
 		GameRegistry.registerWorldGenerator(new WorldGen(), 0);
@@ -128,7 +133,7 @@ public class CommonProxy{
 		GameRegistry.addSmelting(Ref.charwood, new ItemStack(Items.COAL,1,1), 0.15f);
 	}
 	public void postInit(){
-		
+		Corruptor.allocateMaps();
 	}
 	
 	public void registerModels() { }
@@ -151,71 +156,45 @@ public class CommonProxy{
 		EntityPortal.createPortal(world, pos2);
 	}
 	
-	private static boolean portalCheck_start=true;
-    
 	protected List<NetherFairy> fairies = new ArrayList<>();
 	protected List<NetherFairy> new_fairies = new ArrayList<>();
 	
+	int playerindex = 0;
+	
     @SubscribeEvent
     public void serverTick(TickEvent.ServerTickEvent event) {
-    	portalCheck_start=!portalCheck_start;
-    	boolean portalCheck = portalCheck_start;
     	MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
     	List<EntityPlayerMP> playerlist = server.getPlayerList().getPlayers();
-    	World nether=null;
-    	for (EntityPlayerMP player : playerlist) {
-    		switch(player.world.provider.getDimensionType()) {
-	    	case NETHER:{ //internal corruption
-	    		if (!Options.internalcorruption) { break; }
-	    		if(nether==null) { nether=player.world; }
-	    		if (!EntityPortal.testChance(Options.portal_creep_chance)) { break; }
-	    		BlockPos pos = player.getPosition().add(rand.nextInt(19) - 9, rand.nextInt(5) - 2, rand.nextInt(19) - 9);
-	    		internalCorruption(nether, pos);
-	    		EntityPortal.corruptEntities(nether, pos);
-	    		break;}
-	    	default:{ // find portal blocks and start creeping
-	    		BlockPos pos = player.getPosition();
-	        	portalCheck=!portalCheck;
-	        	if (!portalCheck) {
-	        		pos = pos.add(rand.nextInt(19) - 9, rand.nextInt(5) - 2, rand.nextInt(19) - 9);
-	        	}
-	        	Block block = player.world.getBlockState(pos).getBlock();
-	        	if (block==Blocks.PORTAL) {
-	        		EntityPortal.createPortal(player.world, pos);
-	        	}
-	    		break;}
+    	if(playerlist.isEmpty()) { return; }
+    	if(playerindex>=playerlist.size()) { playerindex=0; }
+    	EntityPlayerMP player = playerlist.get(playerindex++);
+		switch(player.world.provider.getDimensionType()) {
+    	case NETHER:{ //internal corruption
+    		if (!Options.internalcorruption) { break; }
+    		World nether=player.world;
+    		if (!Corruptor.doesPortalCreep()) {
+        		BlockPos pos = player.getPosition().add(
+        				rand.nextInt(19) - 9,
+        				rand.nextInt(5) - 2,
+        				rand.nextInt(19) - 9 );
+        		Corruptor.DoCorruption(nether, pos, new_fairies);
+        		Corruptor.corruptEntities(nether, pos);
     		}
-    	}
-    	if(Options.internalcorruption && nether!=null) {
-    		Iterator<NetherFairy> it = fairies.iterator();
-    		while (it.hasNext()) {
-    			NetherFairy fairy = it.next();
-    			if(!EntityPortal.testChance(Options.creep_chance)) { continue; }
-    			if (!nether.isBlockLoaded(fairy.pos)) { it.remove(); continue; }
-    			Block block = nether.getBlockState(fairy.pos).getBlock();
-    			if (!fairy.blockValid(block)) { it.remove(); continue; }
-    			internalCorruption(nether, fairy.getNeighbor());
-    			if(fairy.neighbors.size() == 0) {
-    				EntityPortal.corruptionFinal(nether, fairy);
-    				it.remove(); continue;
-    			}
-    		}
-    		fairies.addAll(new_fairies);
-    		new_fairies.clear();
-    	}
-    }
-    
-    private void internalCorruption(World nether, BlockPos pos) {
-    	Block base = nether.getBlockState(pos).getBlock();
-    	EntityPortal.corruptionSpecial(nether, pos);
-		if (!EntityPortal.corruptionMap.containsKey(base)) {
-			return;
-		}
-		Block into = EntityPortal.corruptionMap.get(base);
-		if(nether.getBlockState(pos).getBlock()!=into) {
-			nether.setBlockState(pos, into.getDefaultState(),2);
-		}
-		new_fairies.add(new NetherFairy(pos, base, into));
+    		Corruptor.updateFairies(nether,fairies,new_fairies);
+    		break;
+    	}default:{ // find portal blocks and start creeping
+    		BlockPos pos = player.getPosition();
+        	Block block = player.world.getBlockState(pos).getBlock();
+        	if (block==Blocks.PORTAL) {
+        		EntityPortal.createPortal(player.world, pos);
+        	}
+        	pos = pos.add(rand.nextInt(19) - 9, rand.nextInt(5) - 2, rand.nextInt(19) - 9);
+        	block = player.world.getBlockState(pos).getBlock();
+          	if (block==Blocks.PORTAL) {
+        		EntityPortal.createPortal(player.world, pos);
+        	}
+    		break;
+		}}
     }
     
     Minecraft minecraft = Minecraft.getMinecraft();
