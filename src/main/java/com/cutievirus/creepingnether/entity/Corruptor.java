@@ -23,6 +23,8 @@ import net.minecraft.entity.passive.EntitySkeletonHorse;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityZombieHorse;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,6 +37,26 @@ public class Corruptor extends CorruptorAbstract {
 		super(world,pos);
 	}
 	
+	static Corruption function_burn = (world,pos)->{
+		if(world.getBlockState(pos.up()).getBlock()==Blocks.AIR) {
+			setFire(world, pos.up());
+		}else if(world.getBlockState(pos.north()).getBlock()==Blocks.AIR
+		||world.getBlockState(pos.south()).getBlock()==Blocks.AIR
+		||world.getBlockState(pos.east()).getBlock()==Blocks.AIR
+		||world.getBlockState(pos.west()).getBlock()==Blocks.AIR){
+			if(world.getBlockState(pos.north()).getBlock()==Blocks.AIR)
+			{ setFire(world, pos.north()); }
+			if(world.getBlockState(pos.south()).getBlock()==Blocks.AIR)
+			{ setFire(world, pos.south()); }
+			if(world.getBlockState(pos.east()).getBlock()==Blocks.AIR)
+			{ setFire(world, pos.east()); }
+			if(world.getBlockState(pos.west()).getBlock()==Blocks.AIR)
+			{ setFire(world, pos.west()); }
+		}else if(world.getBlockState(pos.down()).getBlock()==Blocks.AIR) {
+			setFire(world, pos.down());
+		}
+	};
+	
 	public static void allocateMaps() {
 		corruptionMap.clear();
 		corruptionSpecial.clear();
@@ -44,8 +66,11 @@ public class Corruptor extends CorruptorAbstract {
 				Blocks.DIRT,
 				Blocks.MYCELIUM,
 				Blocks.GRASS,
-				Blocks.STONE
+				//Blocks.STONE
 		}, Blocks.NETHERRACK)
+		.add(Blocks.STONE, (BlockForMeta)data->{
+			return data==0?Blocks.NETHERRACK:data%2==1?Blocks.MAGMA:null;
+		})
 		.assign(new Object[]{
 				Blocks.SAND,
 				Blocks.CLAY,
@@ -61,7 +86,7 @@ public class Corruptor extends CorruptorAbstract {
 		.assign(new Object[]{
 				Blocks.STONE_SLAB
 		}, (BlockForMeta)data->
-		data==3 ? Ref.bloodstone_slab : data==1 ? Ref.soulstone_slab : null)
+		data==3||data==11 ? Ref.bloodstone_slab : data==1||data==9 ? Ref.soulstone_slab : null)
 		.assign(new Object[]{
 				Blocks.DOUBLE_STONE_SLAB
 		}, (BlockForMeta)data->
@@ -130,25 +155,7 @@ public class Corruptor extends CorruptorAbstract {
 		corruptionSpecial.assign(new Object[]{
 				Blocks.LEAVES,
 				Blocks.LEAVES2
-		},(world,pos)->{
-			if(world.getBlockState(pos.up()).getBlock()==Blocks.AIR) {
-				setFire(world, pos.up());
-			}else if(world.getBlockState(pos.north()).getBlock()==Blocks.AIR
-			||world.getBlockState(pos.south()).getBlock()==Blocks.AIR
-			||world.getBlockState(pos.east()).getBlock()==Blocks.AIR
-			||world.getBlockState(pos.west()).getBlock()==Blocks.AIR){
-				if(world.getBlockState(pos.north()).getBlock()==Blocks.AIR)
-				{ setFire(world, pos.north()); }
-				if(world.getBlockState(pos.south()).getBlock()==Blocks.AIR)
-				{ setFire(world, pos.south()); }
-				if(world.getBlockState(pos.east()).getBlock()==Blocks.AIR)
-				{ setFire(world, pos.east()); }
-				if(world.getBlockState(pos.west()).getBlock()==Blocks.AIR)
-				{ setFire(world, pos.west()); }
-			}else if(world.getBlockState(pos.down()).getBlock()==Blocks.AIR) {
-				setFire(world, pos.down());
-			}
-		})
+		},function_burn)
 		.assign(new Object[]{
 				Blocks.TALLGRASS,
 				Blocks.DOUBLE_PLANT
@@ -218,13 +225,16 @@ public class Corruptor extends CorruptorAbstract {
 			}
 			switch(transformation) {
 			case VILLAGER_WITCHIFY:
-				replaceMob(villager,new EntityWitch(entity.world));
+				EntityWitch witch = new EntityWitch(entity.world);
+				copyMobData(villager,witch);
+				replaceMob(villager,witch);
 				break;
 			case VILLAGER_ZOMBIFY:
 				EntityZombieVillager zombie = new EntityZombieVillager(entity.world);
 	        	@SuppressWarnings("deprecation")
 				int profession = villager.getProfession();
 	            zombie.setProfession(profession);
+	            copyMobData(villager,zombie);
 				replaceMob(villager,zombie);
 				break;
 			default: break;
@@ -234,6 +244,40 @@ public class Corruptor extends CorruptorAbstract {
 		.add("minecraft:pig", entity->{
 			if(!Options.entity_corruption.pig_zombies) {return false;}
 			EntityPigZombie pigman = new EntityPigZombie(entity.world);
+			copyMobData(entity,pigman);
+			Item item=Items.AIR;
+			double n = rand.nextDouble()*100;
+			if(n<1) {
+				item=Items.CARROT_ON_A_STICK;
+			}else if(n<10) {
+				item=Items.STICK;
+			}else if(n<40) {
+				item=Items.WOODEN_SWORD;
+			}else if(n<50) {
+				item=Items.WOODEN_HOE;
+			}else if(n<60) {
+				item=Items.WOODEN_SHOVEL;
+			}else if(n<85) {
+				item=Items.GOLDEN_SWORD;
+			}else if(n<95) {
+				item=Items.GOLDEN_HOE;
+			}else if(n<99) {
+				item=Items.BONE;
+			}else{
+				item=Items.DIAMOND_SWORD;
+			}
+			pigman.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(item));
+			n = rand.nextDouble()*100;
+			if(n<20) {
+				item=Items.SHIELD;
+			}else if(n<30) {
+				item=Items.POISONOUS_POTATO;
+			}else if(n<35) {
+				item=Items.FERMENTED_SPIDER_EYE;
+			}else {
+				item=Items.AIR;
+			}
+			pigman.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, new ItemStack(item));
 			replaceMob(entity,pigman);
 			return true;
 		})
@@ -241,6 +285,7 @@ public class Corruptor extends CorruptorAbstract {
 			if(!Options.entity_corruption.magma_slime) {return false;}
 			EntitySlime slime = (EntitySlime)entity;
 			EntityMagmaCube magmacube = new EntityMagmaCube(entity.world);
+			copyMobData(slime,magmacube);
         	NBTTagCompound tag = new NBTTagCompound();
         	slime.writeEntityToNBT(tag);
         	magmacube.readEntityFromNBT(tag);
@@ -256,7 +301,9 @@ public class Corruptor extends CorruptorAbstract {
 	        	entity.setDead();
 	        	return true;
 			} else if(Options.entity_corruption.cow_mooshroom) {
-				replaceMob(entity,new EntityMooshroom(entity.world));
+				EntityMooshroom mooshroom = new EntityMooshroom(entity.world);
+				copyMobData(entity,mooshroom);
+				replaceMob(entity,mooshroom);
 				return true;
 			}
         	return false;
@@ -288,10 +335,14 @@ public class Corruptor extends CorruptorAbstract {
 			Transformations transformation = TransformationLists.horse_transformations.getRandom();
 			switch(transformation) {
 			case HORSE_SKELEFY:
-				replaceMob(horse,new EntitySkeletonHorse(entity.world));
+				EntitySkeletonHorse skelly = new EntitySkeletonHorse(entity.world);
+				copyMobData(horse,skelly);
+				replaceMob(horse,skelly);
 				break;
 			case HORSE_ZOMBIFY:
-				replaceMob(horse,new EntityZombieHorse(entity.world));
+				EntityZombieHorse zombie = new EntityZombieHorse(entity.world);
+				copyMobData(horse,zombie);
+				replaceMob(horse,zombie);
 				break;
 			default: break;
 			}
@@ -308,10 +359,28 @@ public class Corruptor extends CorruptorAbstract {
 		})
 		.add("minecraft:skeleton", entity->{
 			if(!Options.entity_corruption.wither_skeletons) { return false; }
-			replaceMob(entity,new EntityWitherSkeleton(entity.world));
+			EntityWitherSkeleton wither = new EntityWitherSkeleton(entity.world);
+			copyMobData(entity,wither);
+			replaceMob(entity,wither);
 			return true;
 		})
 		;
+		// config settings
+		corruptionMap.assign(Options.customCorruption.toNetherrack,Blocks.NETHERRACK)
+		.assign(Options.customCorruption.toMagma,Blocks.MAGMA)
+		.assign(Options.customCorruption.toObsidian,Blocks.OBSIDIAN)
+		.assign(Options.customCorruption.toSoulSand,Blocks.SOUL_SAND)
+		.assign(Options.customCorruption.toCharwood,Ref.charwood)
+		.assign(Options.customCorruption.toCharwood_planks,Ref.charwood_planks)
+		.assign(Options.customCorruption.toCharwood_slab,Ref.charwood_slab)
+		.assign(Options.customCorruption.toCharwood_stairs,Ref.charwood_stairs)
+		.assign(Options.customCorruption.toSoulstone,Ref.soulstone)
+		.assign(Options.customCorruption.toSoulstone_slab,Ref.soulstone_slab)
+		.assign(Options.customCorruption.toSoulstone_stairs,Ref.soulstone_stairs)
+		.assign(Options.customCorruption.toAir,Blocks.AIR)
+		;
+		corruptionSpecial.assign(Options.customCorruption.toBurn, function_burn);
+		loadCustomCorruption(Options.customCorruption.toCustom);
 	}
 
 }

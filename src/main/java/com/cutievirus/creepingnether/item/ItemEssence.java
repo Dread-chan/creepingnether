@@ -3,6 +3,7 @@ package com.cutievirus.creepingnether.item;
 import com.cutievirus.creepingnether.EasyMap;
 import com.cutievirus.creepingnether.Ref;
 import com.cutievirus.creepingnether.entity.Corruptor;
+import com.cutievirus.creepingnether.entity.CorruptorAbstract.BlockForMeta;
 import com.cutievirus.creepingnether.entity.CorruptorAbstract.Corruption;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -64,7 +65,11 @@ public class ItemEssence extends ItemSimpleFoiled {
         Block block = state.getBlock();
         String blockname = block.getRegistryName().toString();
         Object[] keys = {blockname,block};
-        if(getCorruptionMap().getFrom(keys) != null
+        Object corruptto = getCorruptionMap().getFrom(keys);
+        if(corruptto instanceof BlockForMeta) {
+        	corruptto = ((BlockForMeta)corruptto).apply(block.getMetaFromState(state));
+        }
+        if(corruptto != null
         ||getCorruptionSpecial().getFrom(keys) != null ) {
         	doCorruption(world, pos);
         	corruptionFinal(world,pos);

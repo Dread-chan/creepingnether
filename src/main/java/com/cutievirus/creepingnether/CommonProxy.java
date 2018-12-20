@@ -38,6 +38,7 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -156,24 +157,43 @@ public class CommonProxy{
 		EntityPortal.createPortal(world, pos2);
 	}
 	
+	@SubscribeEvent
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		World world = event.getWorld();
+		if(world.provider.getDimensionType()!=DimensionType.NETHER
+		||Options.internalcorruption==0) {
+			return;
+		}
+		BlockPos pos = event.getPos().add(
+				rand.nextInt(5) - 2,
+				rand.nextInt(5) - 2,
+				rand.nextInt(5) - 2 );
+		Corruptor.DoCorruption(world, pos, new_fairies);
+	}
+	
 	protected List<NetherFairy> fairies = new ArrayList<>();
 	protected List<NetherFairy> new_fairies = new ArrayList<>();
+	
+	MinecraftServer server=null;
+	List<EntityPlayerMP> players = null;
 	
 	int playerindex = 0;
 	
     @SubscribeEvent
     public void serverTick(TickEvent.ServerTickEvent event) {
-    	MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-    	List<EntityPlayerMP> playerlist = server.getPlayerList().getPlayers();
-    	if(playerlist.isEmpty()) { return; }
-    	if(playerindex>=playerlist.size()) { playerindex=0; }
-    	EntityPlayerMP player = playerlist.get(playerindex++);
+    	if(players==null) {
+    		server = FMLCommonHandler.instance().getMinecraftServerInstance();
+    		players = server.getPlayerList().getPlayers();
+    	}
+    	//server.profiler.startSection("Creeping Tick");
+    	if(players.isEmpty()) { return; }
+    	if(playerindex>=players.size()) { playerindex=0; }
+    	EntityPlayerMP player = players.get(playerindex++);
 		switch(player.world.provider.getDimensionType()) {
     	case NETHER:{ //internal corruption
-    		if (!Options.internalcorruption) { break; }
     		World nether=player.world;
-    		if (!Corruptor.doesPortalCreep()) {
-        		BlockPos pos = player.getPosition().add(
+    		if (Corruptor.doesNetherCreep()) {
+    			BlockPos pos = player.getPosition().add(
         				rand.nextInt(19) - 9,
         				rand.nextInt(5) - 2,
         				rand.nextInt(19) - 9 );
@@ -195,6 +215,7 @@ public class CommonProxy{
         	}
     		break;
 		}}
+		//server.profiler.endSection();
     }
     
     Minecraft minecraft = Minecraft.getMinecraft();

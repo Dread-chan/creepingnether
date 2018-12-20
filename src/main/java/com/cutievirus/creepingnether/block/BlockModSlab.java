@@ -29,6 +29,8 @@ public class BlockModSlab extends BlockSlab{
 	public Item item;
 	protected String name;
 	protected Block base;
+	protected Block halfVersion;
+	protected Block fullVersion;
 	
 	public BlockModSlab(BlockModBlock base, String name, boolean isDouble){
 		super(base.getMaterial(), base.getMapColor());
@@ -57,6 +59,15 @@ public class BlockModSlab extends BlockSlab{
 		slab1.item = new ModItemSlab(slab1,slab1,slab2,burnTime); 
 		slab1.item.setRegistryName(slab1.name+"_slab");
 		slab2.item = slab1.item;
+		slab1.halfVersion=slab2.halfVersion=slab1;
+		slab1.fullVersion=slab2.fullVersion=slab2;
+	}
+	
+	public Block getHalfVersion() {
+		return this.halfVersion;
+	}
+	public Block getFullVersion() {
+		return this.fullVersion;
 	}
 	
 	@Override

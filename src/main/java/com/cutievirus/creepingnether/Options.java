@@ -32,9 +32,10 @@ public class Options {
 	@Config.RangeInt(min=0,max=9999)
 	public static  int creep_radius=45;
 	
-	@Config.Name("Internal Corruption")
-	@Config.Comment("Corruption will also happen inside the Nether.")
-	public static boolean internalcorruption=true;
+	@Config.Name("Internal Corruption Chance")
+	@Config.Comment("The chance Corruption will happen inside the Nether.")
+	@Config.RangeDouble(min=0,max=100)
+	public static double internalcorruption=5d;
 	
 	@Config.Name("Particles")
 	@Config.Comment("Particles will appear above creeping obsidian blocks.")
@@ -50,7 +51,7 @@ public class Options {
 	
 	@Config.Name("Active Corruption Limit")
 	@Config.Comment("How many blocks can be actively corrupting at once.")
-	public static int fairylimit=50;
+	public static int fairylimit=100;
 	
 	@Config.Name("Entity Corruption")
 	@Config.Comment("The Creeping Nether will transform certain types of mobs.")
@@ -175,39 +176,108 @@ public class Options {
 	public static CustomCorruption customCorruption = new CustomCorruption();
 	public static class CustomCorruption {
 		@Config.Name("To Netherrack")
-		public String[] toNetherrack = {};
+		public String[] toNetherrack = {
+				"biomesoplenty:grass",
+				"biomesoplenty:dirt"
+		};
 		
 		@Config.Name("To Soul Sand")
-		public String[] toSoulSand = {};
+		public String[] toSoulSand = {
+				"biomesoplenty:white_sand",
+				"biomesoplenty:mud",
+				"biomesoplenty:grass_path",
+				"biomesoplenty:farmland_0",
+				"biomesoplenty:farmland_1"
+		};
 		
 		@Config.Name("To Magma")
 		public String[] toMagma = {};
 		
+		@Config.Name("To Obsidian")
+		public String[] toObsidian = {
+				"biomesoplenty:hard_ice"
+		};
+		
 		@Config.Name("To Charred Wood")
-		@Config.Comment("Blocks in this list should extend either BlockRotatedPillar or BlockLog.")
-		public String[] toCharwood = {};
+		public String[] toCharwood = {
+				"biomesoplenty:log_0",
+				"biomesoplenty:log_1",
+				"biomesoplenty:log_2",
+				"biomesoplenty:log_3",
+				"biomesoplenty:log_4"
+		};
 		
 		@Config.Name("To Charred Wood Planks")
-		public String[] toCharwood_planks = {};
-		
-		@Config.Name("To Charred Wood Slab")
-		@Config.Comment("Blocks in this list should extend BlockSlab.")
-		public String[] toCharwood_slab = {};
+		public String[] toCharwood_planks = {
+				"biomesoplenty:planks_0"
+		};
 		
 		@Config.Name("To Charred Wood Stairs")
-		@Config.Comment("Blocks in this list should extend BlockStairs.")
-		public String[] toCharwood_stairs = {};
+		public String[] toCharwood_stairs = {
+				"biomesoplenty:sacred_oak_stairs",
+				"biomesoplenty:cherry_stairs",
+				"biomesoplenty:umbran_stairs",
+				"biomesoplenty:fir_stairs",
+				"biomesoplenty:ethereal_stairs",
+				"biomesoplenty:magic_stairs",
+				"biomesoplenty:mangrove_stairs",
+				"biomesoplenty:palm_stairs",
+				"biomesoplenty:redwood_stairs",
+				"biomesoplenty:willow_stairs",
+				"biomesoplenty:pine_stairs",
+				"biomesoplenty:hellbark_stairs",
+				"biomesoplenty:jacaranda_stairs",
+				"biomesoplenty:mahogany_stairs",
+				"biomesoplenty:ebony_stairs",
+				"biomesoplenty:eucalyptus_stairs"
+		};
+		
+		@Config.Name("To Charred Wood Slab")
+		public String[] toCharwood_slab = {
+				"biomesoplenty:wood_slab_0",
+				"biomesoplenty:wood_slab_1",
+				"biomesoplenty:double_wood_slab_0",
+				"biomesoplenty:double_wood_slab_1"
+		};
 		
 		@Config.Name("To Soul Stone")
-		public String[] toSoulstone = {};
-		
-		@Config.Name("To Soul Stone Slab")
-		@Config.Comment("Blocks in this list should extend BlockSlab.")
-		public String[] toSoulstone_slab = {};
+		public String[] toSoulstone = {
+				"biomesoplenty:white_sandstone",
+				"biomesoplenty:mud_brick_block",
+				"biomesoplenty:dried_sand"
+		};
 		
 		@Config.Name("To Soul Stone Stairs")
-		@Config.Comment("Blocks in this list should extend BlockStairs.")
-		public String[] toSoulstone_stairs = {};
+		public String[] toSoulstone_stairs = {
+				"biomesoplenty:white_sandstone_stairs",
+				"biomesoplenty:mud_brick_stairs"
+		};
+		
+		@Config.Name("To Soul Stone Slab")
+		public String[] toSoulstone_slab = {
+				"biomesoplenty:other_slab",
+				"biomesoplenty:double_other_slab"
+		};
+		
+		@Config.Name("To Air")
+		public String[] toAir = {
+				"biomesoplenty:plant_0"
+		};
+		
+		@Config.Name("To Burn")
+		public String[] toBurn = {
+				"biomesoplenty:leaves_0",
+				"biomesoplenty:leaves_1",
+				"biomesoplenty:leaves_2",
+				"biomesoplenty:leaves_3",
+				"biomesoplenty:leaves_4",
+				"biomesoplenty:leaves_5",
+				"biomesoplenty:leaves_6"
+		};
+		
+		@Config.Name("Other")
+		@Config.Comment("Use format mod:fromblock>mod:toblock")
+		public String[] toCustom = {};
 	}
 	
 	public static class TransformationLists{

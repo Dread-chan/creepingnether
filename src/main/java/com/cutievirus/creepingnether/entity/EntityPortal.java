@@ -1,6 +1,7 @@
 package com.cutievirus.creepingnether.entity;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -23,6 +24,10 @@ public class EntityPortal extends Entity{
 	
 	@Override
 	public void onUpdate() {
+		if(world.getBlockState(this.getPosition()).getBlock()!=Blocks.PORTAL) {
+			this.setDead();
+			return; 
+		}
 		corruptor.onUpdate();
 	}
 
@@ -32,6 +37,7 @@ public class EntityPortal extends Entity{
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound compound) {
 		corruptor.readEntityFromNBT(compound);
+		corruptor.setPos(this.getPosition());
 	}
 
 	@Override

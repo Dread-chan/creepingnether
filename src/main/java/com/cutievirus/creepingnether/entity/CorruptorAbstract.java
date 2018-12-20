@@ -3,6 +3,7 @@ package com.cutievirus.creepingnether.entity;
 import com.cutievirus.creepingnether.EasyMap;
 import com.cutievirus.creepingnether.Options;
 import com.cutievirus.creepingnether.Ref;
+import com.cutievirus.creepingnether.block.BlockModSlab;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFire;
@@ -18,6 +19,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -112,6 +114,7 @@ public abstract class CorruptorAbstract {
 	
 	public static boolean doesBlockCreep() { return testChance(Options.creep_chance); }
 	public static boolean doesPortalCreep() { return testChance(Options.portal_creep_chance); }
+	public static boolean doesNetherCreep() { return testChance(Options.internalcorruption); }
 	public static boolean testChance(double chance) {
 		return rand.nextDouble()*100<chance;
 	}
@@ -125,6 +128,7 @@ public abstract class CorruptorAbstract {
 	}
 	
 	public void onUpdate() {
+		world.profiler.startSection("Corruptor");
 		if(doesPortalCreep()) {
 			int radius;
 			if(Options.creep_radius==0) { radius = 16; }
@@ -141,13 +145,16 @@ public abstract class CorruptorAbstract {
 			}
 		}
 		updateFairies(world,fairies,new_fairies);
+		world.profiler.endSection();
 	}
 	
 	public static void updateFairies(World world, List<NetherFairy> fairies, List<NetherFairy> new_fairies ) {
+		
+		world.profiler.startSection("Update Fairies");
 		Iterator<NetherFairy> it = fairies.iterator();
 		while (it.hasNext()) {
 			NetherFairy fairy = it.next();
-			if(!doesBlockCreep()) { continue; }
+			if(!doesBlockCreep()) { continue;}
 			if(updateFairy(world,fairy,new_fairies)) { it.remove(); }
 		}
 		if( fairies.size()<Options.fairylimit && new_fairies.size()>0) {
@@ -155,6 +162,7 @@ public abstract class CorruptorAbstract {
 		}
 		//fairies.addAll(new_fairies);
 		//new_fairies.clear();
+		world.profiler.endSection();
 	}
 	
 	private static boolean updateFairy(World world, NetherFairy fairy, List<NetherFairy> new_fairies) {
@@ -173,9 +181,15 @@ public abstract class CorruptorAbstract {
 	
 	public static void corruptBiome(World world, BlockPos pos) {
 		if(!world.isBlockLoaded(pos)) {return;}
+		Biome oldbiome = world.getBiome(pos);
+		Biome newbiome = getBiome();
+		if(oldbiome==newbiome
+		|| oldbiome==Biomes.HELL&&newbiome==Ref.biome) {
+			return;
+		}
 		Chunk chunk = world.getChunkFromBlockCoords(pos);
 		chunk.getBiomeArray()[(pos.getZ() & 15) << 4 | (pos.getX() & 15)] =
-				(byte) Biome.getIdForBiome(getBiome());
+				(byte) Biome.getIdForBiome(newbiome);
 		CreepingMessage.sendMessage(world, pos, CreepingMessage.CORRUPTBIOME);
 	}
 	
@@ -187,6 +201,7 @@ public abstract class CorruptorAbstract {
 	}
 	
 	public static NetherFairy DoCorruption(World world, BlockPos pos) {
+		
 		IBlockState state1 = world.getBlockState(pos);
 		Block block1 = state1.getBlock();
 		String blockname = block1.getRegistryName().toString();
@@ -204,6 +219,10 @@ public abstract class CorruptorAbstract {
 		}
 		if( value instanceof Block) { block2 = (Block)value; }
 		else if(value instanceof String) { block2 = Block.getBlockFromName((String)value); }
+		if (block1 instanceof BlockSlab && block2 instanceof BlockModSlab) {
+			BlockModSlab slab = (BlockModSlab)block2;
+			block2 = ((BlockSlab)block1).isDouble()?slab.getFullVersion():slab.getHalfVersion();
+		}
 		if(block2 != null) {
 			IBlockState state2 = block2.getDefaultState();
 			if(block1 instanceof BlockRotatedPillar && block2 instanceof BlockRotatedPillar)
@@ -309,8 +328,15 @@ public abstract class CorruptorAbstract {
 	
 	protected static void replaceMob(EntityLiving mob1, EntityLiving mob2){
 		World world = mob1.world;
+		if (world.isRemote || mob1.isDead){ return; }
+		mob2.setLocationAndAngles(mob1.posX, mob1.posY, mob1.posZ,
+				mob1.rotationYaw, mob1.rotationPitch);
+        world.spawnEntity(mob2);
+        mob1.setDead();
+	}
+	protected static void copyMobData(EntityLiving mob1, EntityLiving mob2){
+		World world = mob1.world;
         if (world.isRemote || mob1.isDead){ return; }
-        mob2.setLocationAndAngles(mob1.posX, mob1.posY, mob1.posZ, mob1.rotationYaw, mob1.rotationPitch);
         mob2.onInitialSpawn(world.getDifficultyForLocation(new BlockPos(mob2)), (IEntityLivingData)null);
         mob2.setNoAI(mob1.isAIDisabled());
         if(mob2 instanceof EntityZombie) {
@@ -330,8 +356,14 @@ public abstract class CorruptorAbstract {
         	EntityEquipmentSlot slot = EntityLiving.getSlotForItemStack(item);
         	mob2.setItemStackToSlot(slot, item);
         }
-        world.spawnEntity(mob2);
-        mob1.setDead();
+	}
+	
+	protected static void loadCustomCorruption(String[] customList) {
+		for (String corruption : customList) {
+			String[] arr = corruption.split(">",2);
+			if(arr.length<2) { continue; }
+			corruptionMap.add(arr[0], arr[1]);
+		}
 	}
 	
 }
