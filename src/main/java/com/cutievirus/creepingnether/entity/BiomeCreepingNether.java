@@ -25,7 +25,7 @@ public class BiomeCreepingNether extends Biome {
         this.spawnableCreatureList.clear();
         this.spawnableWaterCreatureList.clear();
         if(Options.spawning.ghast) {
-        	this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityGhast.class, 10, 4, 4));
+        	this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityGhast.class, 15, 4, 4));
         }
         if(Options.spawning.pigmen) {
         	this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityPigZombie.class, 40, 4, 4));

@@ -2,6 +2,11 @@ package com.cutievirus.creepingnether.block;
 
 import java.util.Random;
 
+import com.cutievirus.creepingnether.Ref;
+import com.cutievirus.creepingnether.item.ItemEssence;
+
+import net.minecraft.block.material.MapColor;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -22,8 +27,28 @@ public class BlockNetherRedstone extends BlockNetherOre{
 	public static final PropertyEnum<EnumType> VARIANT = PropertyEnum.<EnumType>create("variant",EnumType.class);
 
 	public BlockNetherRedstone(){
-		super("netherredstone", Blocks.REDSTONE_ORE, Items.REDSTONE,1, 4,6, 1,5);
+		this("netherredstone", Material.ROCK, MapColor.NETHERRACK);
+	}
+	public BlockNetherRedstone(String name, Material material, MapColor mapColor) {
+		super(name,material,mapColor);
+		baseore=Blocks.REDSTONE_ORE;
+		setDrops(Items.REDSTONE, 4, 6);
+		setXp(1,5);
+		setHarvestLevel("pickaxe",1);
 		setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, EnumType.LIT));
+	}
+	
+	public static class BlockHallowRedstone extends BlockNetherRedstone {
+
+		public BlockHallowRedstone() {
+			super("hallowredstone",Material.ROCK,MapColor.SILVER_STAINED_HARDENED_CLAY);
+			setHardness(3.0F).setResistance(10.0F);
+			setHarvestLevel("pickaxe",2);
+		}
+		
+		public ItemEssence getEssence() {
+			return Ref.purifiedessence;
+		}
 	}
 	
 	@Override

@@ -36,13 +36,13 @@ public class EntityPortal extends Entity{
 
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound compound) {
-		corruptor.readEntityFromNBT(compound);
+		corruptor.readNBT(compound);
 		corruptor.setPos(this.getPosition());
 	}
 
 	@Override
 	protected void writeEntityToNBT(NBTTagCompound compound) {
-        corruptor.writeEntityToNBT(compound);
+        corruptor.writeNBT(compound);
 	}
 	
 	public static void createPortal(World world, BlockPos pos) {

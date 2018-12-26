@@ -1,0 +1,8 @@
+{
+    "parent": "block/inner_stairs",
+    "textures": {
+        "bottom": "creepingnether:blocks/hallowstone",
+        "top": "creepingnether:blocks/hallowstone",
+        "side": "creepingnether:blocks/hallowstone"
+    }
+}

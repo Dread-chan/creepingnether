@@ -3,6 +3,7 @@ package com.cutievirus.creepingnether.block;
 import java.util.Random;
 
 import com.cutievirus.creepingnether.Ref;
+import com.cutievirus.creepingnether.item.IModItem;
 import com.cutievirus.creepingnether.item.ModItemSlab;
 
 import net.minecraft.block.Block;
@@ -22,11 +23,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockModSlab extends BlockSlab{
+public class BlockModSlab extends BlockSlab implements IModBlock{
 	
 	public static final PropertyEnum<EnumType> VARIANT = PropertyEnum.<EnumType>create("variant", EnumType.class);
 	
-	public Item item;
+	public ModItemSlab item;
 	protected String name;
 	protected Block base;
 	protected Block halfVersion;
@@ -51,8 +52,17 @@ public class BlockModSlab extends BlockSlab{
 		setTickRandomly(base.getTickRandomly());
 	}
 	
+	@Override
+	public IModItem getModItem() {
+		return this.item;
+	}
+	
 	public static void createItem(BlockModSlab slab1, BlockModSlab slab2) {
-		BlockModSlab.createItem(slab1,slab2,0);
+		int burnTime = 0;
+		if (slab1.base instanceof IModBlock) {
+			burnTime = ((IModBlock)slab1.base).getModItem().getBurnTime()/2;
+		}
+		BlockModSlab.createItem(slab1,slab2,burnTime);
 	}
 	
 	public static void createItem(BlockModSlab slab1, BlockModSlab slab2, int burnTime) {

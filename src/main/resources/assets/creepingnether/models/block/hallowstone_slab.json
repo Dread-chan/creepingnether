@@ -1,0 +1,8 @@
+{
+    "parent": "block/half_slab",
+    "textures": {
+        "bottom": "creepingnether:blocks/hallowstone",
+        "top": "creepingnether:blocks/hallowstone",
+        "side": "creepingnether:blocks/hallowstone"
+    }
+}

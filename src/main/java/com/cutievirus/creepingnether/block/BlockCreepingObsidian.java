@@ -18,13 +18,16 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BlockCreepingObsidian extends BlockCreepingBlock{
 
 	public BlockCreepingObsidian(){
-		super("creepingobsidian", Material.ROCK, MapColor.OBSIDIAN, Blocks.OBSIDIAN);
+		this("creepingobsidian");
+	}
+	public BlockCreepingObsidian(String name){
+		super(name, Material.ROCK, MapColor.OBSIDIAN, Blocks.OBSIDIAN);
 		setTickRandomly(true);
-		
+
 		setHardness(50.0F);
 		setResistance(2000.0F);
 	}
-	
+
 	@Override
 	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
 	{
@@ -36,20 +39,21 @@ public class BlockCreepingObsidian extends BlockCreepingBlock{
 		Block blockwest = world.getBlockState(pos.west()).getBlock();
 		if (blockup!=Blocks.WATER && blockup!=Blocks.FLOWING_WATER
 		&& blockdown!=Blocks.WATER && blockdown!=Blocks.FLOWING_WATER
-		&& blocknorth!=Blocks.WATER && blocknorth!=Blocks.FLOWING_WATER	
-		&& blocksouth!=Blocks.WATER && blocksouth!=Blocks.FLOWING_WATER	
-		&& blockeast!=Blocks.WATER && blockeast!=Blocks.FLOWING_WATER	
-		&& blockwest!=Blocks.WATER && blockwest!=Blocks.FLOWING_WATER	
+		&& blocknorth!=Blocks.WATER && blocknorth!=Blocks.FLOWING_WATER
+		&& blocksouth!=Blocks.WATER && blocksouth!=Blocks.FLOWING_WATER
+		&& blockeast!=Blocks.WATER && blockeast!=Blocks.FLOWING_WATER
+		&& blockwest!=Blocks.WATER && blockwest!=Blocks.FLOWING_WATER
 		){
 			world.setBlockState(pos, Blocks.FLOWING_LAVA.getDefaultState());
 		}
 	}
-	
-    @SideOnly(Side.CLIENT)
+
+    @Override
+	@SideOnly(Side.CLIENT)
     public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
     	if(Options.creepingparticles && rand.nextFloat()<0.25) {
     		world.spawnParticle(EnumParticleTypes.FLAME, pos.getX()+rand.nextDouble(), pos.getY()+1.1d, pos.getZ()+rand.nextDouble(), 0d, 0d, 0d, new int[0]);
     	}
     }
-    
+
 }

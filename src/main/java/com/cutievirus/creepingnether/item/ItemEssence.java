@@ -1,11 +1,10 @@
 package com.cutievirus.creepingnether.item;
 
-import com.cutievirus.creepingnether.EasyMap;
 import com.cutievirus.creepingnether.Ref;
 import com.cutievirus.creepingnether.entity.Corruptor;
-import com.cutievirus.creepingnether.entity.CorruptorAbstract.BlockForMeta;
-import com.cutievirus.creepingnether.entity.CorruptorAbstract.Corruption;
-import net.minecraft.block.Block;
+import com.cutievirus.creepingnether.entity.CorruptorAbstract;
+import com.cutievirus.creepingnether.entity.Purifier;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -19,10 +18,11 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class ItemEssence extends ItemSimpleFoiled {
+public class ItemEssence extends ItemSimpleFoiled implements IModItem {
 	
 	protected SoundEvent sound;
-	private boolean purified;
+	private boolean purified=false;
+	public CorruptorAbstract corruptor = Corruptor.instance;
 	
 	public ItemEssence(String name) {
 		this(name, SoundEvents.ENTITY_ZOMBIE_INFECT);
@@ -35,8 +35,20 @@ public class ItemEssence extends ItemSimpleFoiled {
 		this.sound=sound;
 	}
 	
+	@Override
+	public ItemEssence setBurnTime(int time) { return this; }
+	@Override
+	public ItemEssence setBurnCount(float count) { return this; }
+	@Override
+	public int getBurnTime() { return 0; }
+	
 	public ItemEssence setPurified(boolean isPurified) {
-		this.purified = isPurified;
+		purified = isPurified;
+		if(purified) {
+			corruptor = Purifier.instance;
+		}else {
+			corruptor = Corruptor.instance;
+		}
 		return this;
 	}
 	
@@ -45,71 +57,41 @@ public class ItemEssence extends ItemSimpleFoiled {
 		return this;
 	}
 	
+	public static boolean using = false;
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
     	boolean transformed = transformBlock(world,pos);
     	if(!transformed) { return EnumActionResult.FAIL; }
+    	if(world.isRemote) { return EnumActionResult.SUCCESS; }
+    	using=true;
     	for (int x=-1; x<=1; x++)for (int y=-1; y<=1; y++)for (int z=-1; z<=1; z++) {
     		if(x==0&&y==0&&z==0) { continue; }
     		transformBlock(world,pos.add(x, y, z));
     	}
-    	Corruptor.corruptEntities(world, pos);
+    	corruptor.corruptEntities(world, pos);
     	ItemStack itemstack = player.getHeldItem(hand);
     	itemstack.shrink(1);
     	world.playSound((EntityPlayer)null, pos, this.sound, SoundCategory.BLOCKS, 1.0F, (itemRand.nextFloat() - itemRand.nextFloat()) * 0.2F + 1.0F);
+    	using=false;
     	return EnumActionResult.SUCCESS;
     }
     
     
     protected boolean transformBlock(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
-        Block block = state.getBlock();
-        String blockname = block.getRegistryName().toString();
-        Object[] keys = {blockname,block};
-        Object corruptto = getCorruptionMap().getFrom(keys);
-        if(corruptto instanceof BlockForMeta) {
-        	corruptto = ((BlockForMeta)corruptto).apply(block.getMetaFromState(state));
-        }
+        Object[] keys = CorruptorAbstract.getKeys(state);
+        IBlockState corruptto = corruptor.getCorruptState(world,pos);
         if(corruptto != null
-        ||getCorruptionSpecial().getFrom(keys) != null ) {
-        	doCorruption(world, pos);
-        	corruptionFinal(world,pos);
+        ||corruptor.getCorruptionSpecial().getFrom(keys) != null ) {
+        	if(world.isRemote) { return true; }
+        	corruptBlock(world,pos);
         	return true;
         }
         return false;
     }
     
-    protected EasyMap<Object> getCorruptionMap(){
-    	if(purified) {
-    		return Corruptor.corruptionMap;
-    	}
-    	return Corruptor.corruptionMap;
-    }
-    protected EasyMap<Corruption> getCorruptionSpecial(){
-    	if(purified) {
-    		return Corruptor.corruptionSpecial;
-    	}
-    	return Corruptor.corruptionSpecial;
-    }
-    protected void doCorruption(World world, BlockPos pos) {
-    	if(purified) {
-    		Corruptor.DoCorruption(world, pos);
-    	}else {
-    		Corruptor.DoCorruption(world, pos);
-    	}
-    }
-    protected void corruptEntities(World world, BlockPos pos) {
-    	if(purified) {
-    		Corruptor.corruptEntities(world, pos, 1d);
-    	}else {
-    		Corruptor.corruptEntities(world, pos, 1d);
-    	}
-    }
-    protected void corruptionFinal(World world, BlockPos pos) {
-    	if(purified) {
-    		Corruptor.corruptionFinal(world, pos);
-    	}else {
-    		Corruptor.corruptionFinal(world, pos);
-    	}
+    public void corruptBlock(World world, BlockPos pos) {
+    	corruptor.DoCorruption(world, pos);
+    	corruptor.corruptionFinal(world,pos);
     }
 
 }

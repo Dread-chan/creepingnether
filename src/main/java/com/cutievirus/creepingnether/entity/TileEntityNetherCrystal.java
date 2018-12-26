@@ -1,10 +1,20 @@
 package com.cutievirus.creepingnether.entity;
 
-import net.minecraft.tileentity.TileEntity;
+import com.cutievirus.creepingnether.Ref;
 
-public class TileEntityNetherCrystal extends TileEntity {
+import net.minecraft.block.Block;
+import net.minecraft.util.math.BlockPos;
 
-	public TileEntityNetherCrystal() {
-		
+public class TileEntityNetherCrystal extends TileEntityAbstractCrystal {
+
+	@Override
+	public void createCorruptor() {
+		corruptor = new Corruptor(world,pos);
+	}
+	
+	@Override
+	public boolean blockCanPower(BlockPos pos) {
+		Block block = world.getBlockState(pos).getBlock();
+		return block==Ref.soulstone_charged;
 	}
 }

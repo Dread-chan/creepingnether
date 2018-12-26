@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "axis=y": { "model": "creepingnether:hallowwood" },
+        "axis=z": { "model": "creepingnether:hallowwood", "x": 90 },
+        "axis=x": { "model": "creepingnether:hallowwood", "x": 90, "y": 90 },
+        "axis=none":   { "model": "creepingnether:hallowwood_bark" }
+    }
+}

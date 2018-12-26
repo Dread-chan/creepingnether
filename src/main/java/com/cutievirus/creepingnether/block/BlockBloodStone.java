@@ -49,7 +49,7 @@ public class BlockBloodStone extends BlockModBlock{
 			break;
 		}
 		if(corrupt) {
-			Corruptor.DoCorruption(world, pos);
+			Corruptor.instance.DoCorruption(world, pos);
 		}
 	}
 	

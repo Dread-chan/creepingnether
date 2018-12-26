@@ -2,23 +2,24 @@ package com.cutievirus.creepingnether.block;
 
 import java.util.Random;
 
+import com.cutievirus.creepingnether.item.ModItemBlock;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-public class BlockCreepingBlock extends Block {
+public class BlockCreepingBlock extends Block implements IModBlock {
 
 	protected final Block base;
 	protected Block drop;
-	public Item item;
+	public ModItemBlock item;
 	public String itemModel;
 	
 	public BlockCreepingBlock(String name, Material material, MapColor mapcolor, Block base){
@@ -29,8 +30,13 @@ public class BlockCreepingBlock extends Block {
 		this.base=base;
 		this.drop=base;
 		this.itemModel=Item.getItemFromBlock(base).getRegistryName().toString();
-		this.item = new ItemBlock(this);
+		this.item = new ModItemBlock(this);
 		item.setRegistryName(name);
+	}
+	
+	@Override
+	public ModItemBlock getModItem() {
+		return this.item;
 	}
 	
 	@Override

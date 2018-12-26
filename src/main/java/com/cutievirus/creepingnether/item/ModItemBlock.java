@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ModItemBlock extends ItemBlock {
+public class ModItemBlock extends ItemBlock implements IModItem {
 	
 	protected int burnTime = 0;
 	private boolean shiny = false;
@@ -24,6 +24,21 @@ public class ModItemBlock extends ItemBlock {
     public int getItemBurnTime(ItemStack itemStack) {
         return this.burnTime;
     }
+	@Override
+	public int getBurnTime() {
+		return burnTime;
+	}
+	
+	@Override
+	public ModItemBlock setBurnTime(int time) {
+		this.burnTime=time;
+		return this;
+	}
+	@Override
+	public ModItemBlock setBurnCount(float count) {
+		this.burnTime=(int) (count*200);
+		return this;
+	}
 	
 	@Override
     @SideOnly(Side.CLIENT)

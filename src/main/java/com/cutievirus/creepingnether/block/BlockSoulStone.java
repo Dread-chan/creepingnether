@@ -18,9 +18,11 @@ public class BlockSoulStone extends BlockModBlock{
 	public BlockSoulStone() {
 		this("soulstone");
 	}
-	
 	public BlockSoulStone(String name) {
-		super(name,Material.ROCK, MapColor.BROWN);
+		this(name,Material.ROCK, MapColor.BROWN);
+	}
+	public BlockSoulStone(String name,Material material, MapColor mapColor) {
+		super(name,material, mapColor);
 		setCreativeTab(Ref.tabcreepingnether);
 		setSoundType(SoundType.STONE);
 		

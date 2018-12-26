@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "variant=lit": { "model": "creepingnether:hallowredstone" },
+        "variant=unlit": { "model": "creepingnether:hallowredstone" }
+    }
+}

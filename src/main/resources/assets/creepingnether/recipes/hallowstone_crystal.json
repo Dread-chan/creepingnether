@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "x#x",
+    "#&#",
+    "x#x"
+  ],
+  "key": {
+    "x": {
+      "item": "creepingnether:essence_purified"
+    },
+    "#": {
+      "item": "creepingnether:hallowstone_charged"
+    },
+    "&": {
+      "item": "minecraft:dragon_breath"
+    }
+  },
+  "result": {
+    "item": "creepingnether:hallowstone_crystal",
+    "count": 1
+  }
+}

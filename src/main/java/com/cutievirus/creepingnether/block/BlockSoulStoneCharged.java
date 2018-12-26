@@ -1,8 +1,12 @@
 package com.cutievirus.creepingnether.block;
 
+
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 
 public class BlockSoulStoneCharged extends BlockSoulStone{
 	
@@ -24,5 +28,10 @@ public class BlockSoulStoneCharged extends BlockSoulStone{
 	protected double getSpeedMult() {
 		return 0.2D;
 	}
+	
+	@Override
+    public boolean canEntitySpawn(IBlockState state, Entity entity) {
+        return entity.isEntityInvulnerable(DamageSource.WITHER);
+    }
 	
 }

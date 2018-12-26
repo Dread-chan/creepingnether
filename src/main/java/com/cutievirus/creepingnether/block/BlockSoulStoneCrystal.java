@@ -1,10 +1,14 @@
 package com.cutievirus.creepingnether.block;
 
+import com.cutievirus.creepingnether.entity.TileEntityNetherCrystal;
+
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
 public class BlockSoulStoneCrystal extends BlockSoulStone{
@@ -36,7 +40,12 @@ public class BlockSoulStoneCrystal extends BlockSoulStone{
 	
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state){
-		return null;
+		return new TileEntityNetherCrystal();
 	}
+	
+	@Override
+    public boolean canEntitySpawn(IBlockState state, Entity entity) {
+        return entity.isEntityInvulnerable(DamageSource.WITHER);
+    }
 	
 }
