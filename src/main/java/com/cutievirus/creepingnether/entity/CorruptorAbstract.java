@@ -47,9 +47,9 @@ public abstract class CorruptorAbstract {
 	public interface Corruption{ void corrupt(World world,BlockPos pos); }
 	public interface EntityCorruption{ boolean corrupt(EntityLiving entity); }
 
-	protected World world;
-	protected BlockPos position;
-	protected long genesis;
+	protected World world = null;
+	protected BlockPos position=BlockPos.ORIGIN;
+	protected long genesis=0;
 	protected double powerlevel=1.0;
 	protected List<NetherFairy> fairies = new ArrayList<>();
 	protected List<NetherFairy> new_fairies = new ArrayList<>();
@@ -67,7 +67,6 @@ public abstract class CorruptorAbstract {
 	CorruptorAbstract(){
 		genesis=0;
 		world=null;
-		position=null;
 	}
 	CorruptorAbstract(World world, BlockPos pos){
 		genesis = world.getTotalWorldTime();
@@ -109,6 +108,7 @@ public abstract class CorruptorAbstract {
 	}
 
 	public double getLife () {
+		if(world==null) { return 0; }
 		return Math.min((world.getTotalWorldTime() - genesis)/(double)getCreepTime(),1);
 	}
 
@@ -125,7 +125,7 @@ public abstract class CorruptorAbstract {
 	}
 
 	public boolean inRadius(BlockPos pos) {
-		if(Options.creep_radius==0) { return true; }
+		if(Options.creep_radius==0 || world==null) { return true; }
 		int radius = getRadius();
 		return getPos().distanceSq(pos) <= radius*radius;
 	}
