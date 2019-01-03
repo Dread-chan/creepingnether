@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "creepingnether:hallowstone_stairs",
+      "creepingnether:hallowstone_slab"
+    ]
+  },
+  "criteria": {
+    "stair_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "creepingnether:hallowstone_stairs"
+      }
+    },
+    "slab_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "creepingnether:hallowstone_slab"
+      }
+    },
+    "has_item": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "creepingnether:hallowstone"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "stair_recipe",
+      "has_item"
+    ],
+    [
+      "slab_recipe",
+      "has_item"
+    ]
+  ]
+}

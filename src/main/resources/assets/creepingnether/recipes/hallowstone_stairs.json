@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "creepingnether:hallowstone"
+    }
+  },
+  "result": {
+    "item": "creepingnether:hallowstone_stairs",
+    "count": 4
+  }
+}

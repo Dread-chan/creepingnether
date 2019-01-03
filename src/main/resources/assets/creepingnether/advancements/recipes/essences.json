@@ -1,0 +1,61 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "creepingnether:purified_essence",
+      "creepingnether:soulstone_charged",
+      "creepingnether:hallowstone_charged",
+      "creepingnether:soulstone_crystal",
+      "creepingnether:hallowstone_crystal"
+    ]
+  },
+  "criteria": {
+    "recipe_purified_essence": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "creepingnether:purified_essence"
+      }
+    },
+    "recipe_soulstone_charged": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "creepingnether:soulstone_charged"
+      }
+    },
+    "recipe_hallowstone_charged": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "creepingnether:hallowstone_charged"
+      }
+    },
+    "recipe_soulstone_crystal": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "creepingnether:soulstone_crystal"
+      }
+    },
+    "recipe_hallowstone_crystal": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "creepingnether:hallowstone_crystal"
+      }
+    },
+    "has_essence": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "creepingnether:essence_nether"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [ "recipe_purified_essence", "has_essence" ],
+    [ "recipe_soulstone_charged", "has_essence" ],
+    [ "recipe_hallowstone_charged", "has_essence" ],
+    [ "recipe_soulstone_crystal", "has_essence" ],
+    [ "recipe_hallowstone_crystal", "has_essence" ]
+  ]
+}
